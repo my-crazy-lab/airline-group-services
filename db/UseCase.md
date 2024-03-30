@@ -3,10 +3,10 @@ Imagine:
 - I have 5 planes (P1, ...P5), 1 airport (X) with 3 ports (X1, X2, X3)
 - My planes can go to A, B, C (round trip)
 
-### Airport Service
+### Airport Management Service
 - Manage planes, ports
 
-### Flight Booking Service
+### Flight Booking Management Service
 - Booking processes. (8)
 - Reservation processes. (7)
 - Seat allocation.
@@ -16,11 +16,11 @@ Imagine:
 ### Check-in Service
 - Passenger check-in, baggage handling, and boarding passes.
 
-### Baggage Tracking Service
+### Baggage Management Service
 - Tracks the status and location of passengers' baggage. (5)
 - Tracks baggage handling, baggage allowances, and baggage claims.
 
-### Flight Status Service
+### Flight Management Service
 - Provides real-time information on flight statuses (3)
 - Handles delays, cancellations, and diversions (4)
 
@@ -28,7 +28,7 @@ Imagine:
 - Manages the scheduling and assignment of flight crews (1)
 - Tracks crew availability (2)
 
-### Invertory Service
+### Invertory Management Service
 - Manages inventory for items such as meals, entertainment, and amenities onboard flights.
 
 ## Sequence
