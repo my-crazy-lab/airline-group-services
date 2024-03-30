@@ -4,15 +4,18 @@ Imagine:
 - My planes can go to A, B, C (round trip)
 
 ### Flight Booking Service:
-- Manages flight inventory, schedules, and prices. (9)
-- Handles booking processes. (8)
-- Handles reservation processes. (7)
+- Booking processes. (8)
+- Reservation processes. (7)
+- Seat allocation.
+- Manages flight schedules, availability and routes
+- Payments for bookings and ticket purchases.
 
 ### Check-in Service:
-- Check-in process for passengers (6)
+- Passenger check-in, baggage handling, and boarding passes.
 
 ### Baggage Tracking Service:
 - Tracks the status and location of passengers' baggage. (5)
+- Tracks baggage handling, baggage allowances, and baggage claims.
 
 ### Flight Status Service:
 - Provides real-time information on flight statuses (3)
@@ -21,6 +24,9 @@ Imagine:
 ### Crew Management Service:
 - Manages the scheduling and assignment of flight crews (1)
 - Tracks crew availability (2)
+
+### Invertory Service:
+- Manages inventory for items such as meals, entertainment, and amenities onboard flights.
 
 ## Sequence:
 - Note: P is passenger, AE is airport employee, C is crew, SE is system employee, S is system(automate)
@@ -45,4 +51,3 @@ Imagine:
   - SE: announce why cancel/delay
   - S: update status flight at waiting hall
 - System manage reservation process (7)
-  - 
