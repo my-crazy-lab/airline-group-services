@@ -60,7 +60,7 @@ Imagine:
 
 ### Tech stack
 - Micro Frontends
-  - Reactjs
+  - Reactjs - Nextjs
   - Webpack Module Federation
 - Backend: Go, gRPC
 - Database: Postgresql
