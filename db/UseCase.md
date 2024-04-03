@@ -3,35 +3,58 @@ Imagine:
 - I have 5 planes (P1, ...P5), 1 airport (X) with 3 ports (X1, X2, X3)
 - My planes can go to A, B, C (round trip)
 
-### Airport Management Service
-- Manage planes, ports
+### Actor
+- Passenger
+- Crew
+- Admin: CS, Inventory management
+
+### Airport Management Service (static)
+- Manage planes, ports, airports
+  - How can the system know how many planes available? Must know how many planes in system
+  - Monitoring(Flight management) have multi ports, we must to know what is correct port of our plane? Must be managed ports
+  - Must have multi airports in multi countries, so need to manage them
 
 ### Flight Booking Management Service
-- Booking processes. (8)
-- Reservation processes. (7)
-- Seat allocation.
-- Manages flight schedules, availability and routes
-- Payments for bookings and ticket purchases.
+- Booking processes (8)
+  - choose depart time + destination -> choose number of passenger (adult, baby, child) -> chose type of ticket (vip / normal) -> choose type of trip (normal / round trip) -> fill information -> choose seat -> choose luggage options -> pay (payment service) 
+
+### Reservation service
+- Why split it into another service?
+  - This feature need realtime, and when have multi booking at once time, this is down server (common with booking).
+  - Because user will stop at this step and choose, thinking very long, and realtime API always call.
+- Workflow
+  - View all seats in plane, display available seat empty.
+  - Manage type of seat (type of ticket) like normal, vip
+  
+### Payment service
+- Multi type of payment store at here
+- For bookings
+  - 
 
 ### Check-in Service
-- Passenger check-in, baggage handling, and boarding passes.
+- Passenger check-in
+  - Send code (8 characters) into phone number of passenger (save from online booking)
 
 ### Baggage Management Service
 - Tracks the status and location of passengers' baggage. (5)
-- Tracks baggage handling, baggage allowances, and baggage claims.
+- Tracks baggage handling (just care basic baggage)
+  - P send x kg baggage -> pay -> create record baggage in db -> save : owner, baggage information, plane's id (when done, the baggage management server will return full baggage of plane)
 - Stored in Elasticsearch using Logstash for indexing and analysis.
 - Logged and tracked using ELK Stack for centralized logging and analysis.
 
 ### Flight Management Service
+- Create a flight from available planes, add crew, setup port to fly
+- Setting flight: price(with each distination, with type of people, type of ticket, type of trip), number of seat, flying time
 - Provides real-time information on flight statuses (3)
 - Handles delays, cancellations, and diversions (4)
 - Kafka for real-time monitoring and updates
+- Manages flight schedules, availability and routes (choose when booking online)
 
 ### Crew Management Service
 - Manages the scheduling and assignment of flight crews (1)
 - Tracks crew availability (2)
 
-### Invertory Management Service
+### Inventory Management Service
 - Manages inventory for items such as meals, entertainment, and amenities onboard flights.
 
 ## Sequence
@@ -39,7 +62,7 @@ Imagine:
 - Main flow
   - SE: create available flight, prices, available seats, schedules (depart time, duration) (9)
   - P: search for available flights
-  - P: (8) choose depart time + destination -> choose trip -> choose number of passenger (adult, baby, child) -> chose type of ticket (vip / normal) -> choose type of trip (normal / round trip) -> fill information -> choose seat -> choose luggage options -> pay 
+  - P: (8) choose depart time + destination -> choose number of passenger (adult, baby, child) -> chose type of ticket (vip / normal) -> choose type of trip (normal / round trip) -> fill information -> choose seat -> choose luggage options -> pay (payment service) 
   - P: go to airport
   - P: show code or qr code
   - AE: verify in system (6)
