@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"net"
 	"net/http"
 	"os"
 	"runtime"
@@ -10,13 +11,21 @@ import (
 	"github.com/gin-contrib/gzip"
 	uuid "github.com/google/uuid"
 	"github.com/joho/godotenv"
-	"github.com/my-crazy-lab/airline-group-services/db"
+	"github.com/my-crazy-lab/airline-group-services/flight-management-service/controllers"
+	"github.com/my-crazy-lab/airline-group-services/flight-management-service/db"
+	"google.golang.org/grpc"
+
+	"github.com/my-crazy-lab/airline-group-services/proto"
 
 	"github.com/gin-gonic/gin"
 )
 
-//CORSMiddleware ...
-//CORS (Cross-Origin Resource Sharing)
+type AddFlightIntoAirport struct {
+	proto.FlightServiceServer
+}
+
+// CORSMiddleware ...
+// CORS (Cross-Origin Resource Sharing)
 func CORSMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		c.Writer.Header().Set("Access-Control-Allow-Origin", "http://localhost")
@@ -35,8 +44,8 @@ func CORSMiddleware() gin.HandlerFunc {
 	}
 }
 
-//RequestIDMiddleware ...
-//Generate a unique ID and attach it to each request for future reference or use
+// RequestIDMiddleware ...
+// Generate a unique ID and attach it to each request for future reference or use
 func RequestIDMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		uuid := uuid.New()
@@ -46,7 +55,24 @@ func RequestIDMiddleware() gin.HandlerFunc {
 }
 
 func main() {
-	//Load the .env file
+	grpcServer := grpc.NewServer()
+
+	// Register your gRPC server implementation
+	// Replace `&YourGRPCServer{}` with your actual server implementation
+	// grpc.RegisterYourServiceServer(grpcServer, &YourGRPCServer{})
+
+	// Start serving gRPC requests
+	go func() {
+		lis, err := net.Listen("tcp", ":50051")
+		if err != nil {
+			log.Fatalf("failed to listen: %v", err)
+		}
+		log.Println("gRPC server listening on port 50051")
+		if err := grpcServer.Serve(lis); err != nil {
+			log.Fatalf("failed to serve: %v", err)
+		}
+	}()
+
 	err := godotenv.Load(".env")
 	if err != nil {
 		log.Fatal("error: failed to load the env file")
@@ -56,7 +82,6 @@ func main() {
 		gin.SetMode(gin.ReleaseMode)
 	}
 
-	//Start the default gin server
 	r := gin.Default()
 
 	r.Use(CORSMiddleware())
@@ -67,8 +92,10 @@ func main() {
 
 	v1 := r.Group("/v1")
 	{
-		// user := new(controllers.UserController)
-		// v1.GET("/test", user.Logout)
+		flight := new(controllers.FlightController)
+		v1.POST("/flight/insert", func(c *gin.Context) {
+			flight.Insert(c)
+		})
 	}
 
 	r.LoadHTMLGlob("./public/html/*")
@@ -83,10 +110,14 @@ func main() {
 	})
 
 	r.NoRoute(func(c *gin.Context) {
+		fmt.Println("No router")
+
 		c.HTML(404, "404.html", gin.H{})
 	})
 
 	port := os.Getenv("PORT")
 
 	log.Printf("\n\n PORT: %s \n ENV: %s \n SSL: %s \n Version: %s \n\n", port, os.Getenv("ENV"), os.Getenv("SSL"), os.Getenv("API_VERSION"))
+
+	r.Run(":" + port)
 }

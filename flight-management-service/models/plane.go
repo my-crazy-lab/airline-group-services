@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/my-crazy-lab/airline-group-services/airport-management-service/db"
-	"github.com/my-crazy-lab/airline-group-services/airport-management-service/forms"
+	"github.com/my-crazy-lab/airline-group-services/flight-management-service/db"
+	"github.com/my-crazy-lab/airline-group-services/flight-management-service/forms"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )

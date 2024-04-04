@@ -1,0 +1,20 @@
+syntax = "proto3";
+option go_package = "github.com/my-crazy-lab/airline-group-services/proto";
+
+message Airport {
+    string id = 1;
+    string name = 2;
+    repeated Flight flights = 3;
+}
+
+message Flight {
+    string id = 1;
+    string name = 2;
+}
+
+service AirportService {
+}
+
+service FlightService {
+    rpc AddFlightIntoAirport(Flight) returns (Flight);
+}

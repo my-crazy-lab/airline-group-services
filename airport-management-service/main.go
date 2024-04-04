@@ -10,13 +10,25 @@ import (
 	"github.com/gin-contrib/gzip"
 	uuid "github.com/google/uuid"
 	"github.com/joho/godotenv"
+	"github.com/my-crazy-lab/airline-group-services/airport-management-service/controllers"
 	"github.com/my-crazy-lab/airline-group-services/airport-management-service/db"
+	"google.golang.org/grpc"
 
 	"github.com/gin-gonic/gin"
 )
 
-//CORSMiddleware ...
-//CORS (Cross-Origin Resource Sharing)
+// Your gRPC client initialization function
+func initializeGRPCClient(serverAddress string) (*grpc.ClientConn, error) {
+	conn, err := grpc.Dial(serverAddress, grpc.WithInsecure())
+	if err != nil {
+		return nil, err
+	}
+
+	return conn, nil
+}
+
+// CORSMiddleware ...
+// CORS (Cross-Origin Resource Sharing)
 func CORSMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		c.Writer.Header().Set("Access-Control-Allow-Origin", "http://localhost")
@@ -35,8 +47,8 @@ func CORSMiddleware() gin.HandlerFunc {
 	}
 }
 
-//RequestIDMiddleware ...
-//Generate a unique ID and attach it to each request for future reference or use
+// RequestIDMiddleware ...
+// Generate a unique ID and attach it to each request for future reference or use
 func RequestIDMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		uuid := uuid.New()
@@ -46,7 +58,12 @@ func RequestIDMiddleware() gin.HandlerFunc {
 }
 
 func main() {
-	//Load the .env file
+	// Initialize gRPC client connection
+	_, grpcError := initializeGRPCClient("localhost:9001")
+	if grpcError != nil {
+		log.Fatal("error: grpc connect failure")
+	}
+
 	err := godotenv.Load(".env")
 	if err != nil {
 		log.Fatal("error: failed to load the env file")
@@ -56,7 +73,6 @@ func main() {
 		gin.SetMode(gin.ReleaseMode)
 	}
 
-	//Start the default gin server
 	r := gin.Default()
 
 	r.Use(CORSMiddleware())
@@ -68,7 +84,7 @@ func main() {
 	v1 := r.Group("/v1")
 	{
 		plan := new(controllers.PlaneController)
-		v1.GET("/plan/insert", plan.Insert)
+		v1.POST("/plane/insert", plan.Insert)
 	}
 
 	r.LoadHTMLGlob("./public/html/*")
@@ -83,10 +99,14 @@ func main() {
 	})
 
 	r.NoRoute(func(c *gin.Context) {
+		fmt.Println("No router")
+
 		c.HTML(404, "404.html", gin.H{})
 	})
 
 	port := os.Getenv("PORT")
 
 	log.Printf("\n\n PORT: %s \n ENV: %s \n SSL: %s \n Version: %s \n\n", port, os.Getenv("ENV"), os.Getenv("SSL"), os.Getenv("API_VERSION"))
+
+	r.Run(":" + port)
 }
