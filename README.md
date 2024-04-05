@@ -86,7 +86,7 @@ Imagine:
   - Reactjs - Nextjs
   - Webpack Module Federation
 - Backend: Go, gRPC
-- Database: Postgresql
+- Database: MongoDB
 - Message Brokers
   - Kafka
   - Facilitates asynchronous communication and event-driven architecture by decoupling producers and consumers of data. It provides fault tolerance, scalability, and durability for message processing in distributed systems
